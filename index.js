@@ -56,6 +56,20 @@ app.post('/addOrders', async(req,res)=>{
     res.json(result);
 })
 
+// GET API by email
+app.get('/processOrders/:email', async (req, res) => {
+    const userEmail = req.params.email;
+    console.log(userEmail);
+    const myOrder = await ordersCollection.find({ email: req.params.email }).toArray();
+    res.json(myOrder);
+});
+
+// Get Api from orders
+app.get('/processOrders', async (req, res) => {
+    const getOrders = await ordersCollection.find({}).toArray();
+    res.json(getOrders)
+});
+
 
 // GET REVIEWS
 app.get('/addReview', async(req,res)=>{
@@ -71,6 +85,15 @@ app.get('/properties/:id', async (req, res) => {
     const properties = await propertiesCollection.findOne(query);
     res.json(properties)
 
+});
+
+
+// Delete API 
+app.delete('/processOrders/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) }
+    const result = await ordersCollection.deleteOne(query);
+    res.json(result)
 });
 
     }
