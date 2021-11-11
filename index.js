@@ -49,6 +49,14 @@ app.post("/addReview", async (req, res) => {
     res.send(result);
   });
 
+// POST ORDERS
+app.post('/addOrders', async(req,res)=>{
+    const newOrder = req.body;
+    const result = await ordersCollection.insertOne(newOrder);
+    res.json(result);
+})
+
+
 // GET REVIEWS
 app.get('/addReview', async(req,res)=>{
     const cursor = reviewCollection.find({});
