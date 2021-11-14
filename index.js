@@ -26,6 +26,7 @@ async function run(){
         const propertiesCollection = database.collection('properties');
         const ordersCollection = database.collection('orders')
         const reviewCollection = database.collection('review')
+        const usersCollection = database.collection('users')
 
 
 
@@ -36,6 +37,39 @@ async function run(){
             const result = await propertiesCollection.insertOne(property);
             res.json(result)
         });
+        // POST USERS API
+        app.post('/users', async (req, res) => {
+            const users = req.body;
+            
+            const result = await usersCollection.insertOne(users);
+            res.json(result)
+            console.log(result)
+        });
+
+
+        // GET USERS API
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            let isAdmin = false;
+            if (user?.role === 'admin') {
+                isAdmin = true;
+            }
+            res.json({ admin: isAdmin });
+        })
+        
+// ADMIN PUT 
+        app.put('/users/admin', async(req,res)=> {
+            const user = req.body;
+            const filter = { email: user.email };
+            const updateDoc = { $set: { role: 'admin' } };
+            const result = await usersCollection.updateOne(filter, updateDoc);
+            res.json(result);
+        })
+
+
+
 // GET API 
 app.get('/properties', async (req, res) => {
     const cursor = propertiesCollection.find({});
@@ -93,6 +127,13 @@ app.delete('/processOrders/:id', async (req, res) => {
     const id = req.params.id;
     const query = { _id: ObjectId(id) }
     const result = await ordersCollection.deleteOne(query);
+    res.json(result)
+});
+// Delete API 
+app.delete('/properties/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) }
+    const result = await propertiesCollection.deleteOne(query);
     res.json(result)
 });
 
